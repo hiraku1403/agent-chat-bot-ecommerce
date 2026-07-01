@@ -1,0 +1,165 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -336,
+        -112
+      ],
+      "id": "e38c4e67-51a9-45a6-8be5-4dc29c16f40d",
+      "name": "When chat message received",
+      "webhookId": "af3e3369-2125-4d17-a913-bcc9eb360044"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Você é a Sofia, a assistente virtual inteligente e empática do e-commerce \"Chuá Brand\". Seu objetivo é ajudar os clientes com dúvidas sobre pedidos, devoluções, frete e suporte técnico no site.\n\nInstruções de Comportamento e Memória:\n1. Saudação: Seja sempre cortês, profissional e use um tom leve e acolhedor (típico de marcas de moda/e-commerce moderno).\n2. Uso da Memória: O usuário pode se identificar. Sempre verifique o histórico da conversa para lembrar o nome do cliente, o número do pedido que ele mencionou anteriormente ou o problema que ele está relatando. Não pergunte duas vezes a mesma informação.\n3. Tomada de Decisão (Tools):\n   - Se o cliente perguntar algo genérico (ex: \"Qual a política de troca?\"), responda diretamente usando seu conhecimento.\n   - Se o cliente perguntar sobre dados específicos que exigem cálculos ou consultas (ex: \"Se eu comprei 3 itens de R$50 e usei cupom de 10%, quanto deu?\", ou futuramente o rastreio de um pedido), utilize as FERRAMENTAS disponíveis para calcular ou buscar a informação exata. Nunca tente adivinhar dados matemáticos ou códigos de rastreio.\n\nPolíticas da Loja (Para você responder direto):\n- Prazo de Entrega: O prazo varia por região, mas o tempo de postagem da fábrica é de até 3 dias úteis após a confirmação do pagamento.\n- Trocas e Devoluções: O cliente tem até 7 dias corridos após o recebimento para solicitar a troca ou devolução gratuita através do painel do cliente.\n\nRegra de Ouro: Se você não souber a resposta ou se o problema for muito complexo (ex: estorno que deu erro), diga educadamente que vai transferir o caso para um atendente humano e solicite o e-mail de contato dele."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -64,
+        -96
+      ],
+      "id": "9712929c-d2eb-46ac-9daa-a2e1d6a93cd2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        112
+      ],
+      "id": "a66d6687-3c0e-4c36-ac23-5be402ba22af",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "iEvnYwNLIHqkEet1",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        112,
+        112
+      ],
+      "id": "deaf2ef8-438f-4009-bb5a-5d8549112e45",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use esta ferramenta quando o cliente fornecer o número de um pedido e quiser saber o status atual da entrega ou o código de rastreio. Requer o id do pedido",
+        "documentId": {
+          "__rl": true,
+          "value": "1JifIkGbVvE2ZEPO0CMs5OH5l72RfkNdpyqs1gCn5GCE",
+          "mode": "list",
+          "cachedResultName": "Banco de Pedidos - Chuá Brand",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JifIkGbVvE2ZEPO0CMs5OH5l72RfkNdpyqs1gCn5GCE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JifIkGbVvE2ZEPO0CMs5OH5l72RfkNdpyqs1gCn5GCE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        80
+      ],
+      "id": "3e4610fd-16af-46ed-ac12-c5d82a839013",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QrL9vVBtsNlgDLQB",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "b240a820-b31c-4db6-8427-400617a58d0d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "397f205ad08f28cbac216fb11372e22daa71c7adb143ff9d94762f8bf5371c52"
+  },
+  "nodeGroups": [],
+  "id": "BdACoUkJRTFIogYp",
+  "tags": []
+}
